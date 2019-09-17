@@ -8,11 +8,15 @@
 
 ## 安装要求
 
-*[curl]( https://curl.haxx.se/)-v7.47.0（根据系统版本下载对应版本curl）
-*[docker](https://docs.docker.com/compose/overview/)-v17.06或以上版本
-*[docker-compose](https://docs.docker.com/compose/overview/)-v1.14或以上版本
-*[golang]( https://golang.google.cn/)-v1.10或以上版本
-*node.js：  v8.9或以上版本
+[curl]( https://curl.haxx.se/)-v7.47.0（根据系统版本下载对应版本curl）
+
+[docker](https://docs.docker.com/compose/overview/)-v17.06或以上版本
+
+[docker-compose](https://docs.docker.com/compose/overview/)-v1.14或以上版本
+
+[golang]( https://golang.google.cn/)-v1.10或以上版本
+
+node.js：  v8.9或以上版本
 
 ## 安装步骤
 
