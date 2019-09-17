@@ -67,7 +67,8 @@ sudo apt-key fingerprint 0EBFCD88
 
 4、	设置docker稳定版仓库：
 
-```sudo add-apt-repository “deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable”
+```
+sudo add-apt-repository “deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable”
 ```
 
 5、	更新apt索引源：
