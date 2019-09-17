@@ -1,0 +1,33 @@
+[2018-10-12 19:40:13.091] [ERROR] Query - Error: Private key missing from key store. Can not establish the signing identity for user admin_cc_gfe
+    at _cryptoSuite.importKey.then.then (/home/puweiwang/SCASverify/node_modules/fabric-client/lib/User.js:255:11)
+    at <anonymous>
+[2018-10-12 19:40:29.312] [ERROR] Query - Error: Private key missing from key store. Can not establish the signing identity for user admin_cc_gfe
+    at _cryptoSuite.importKey.then.then (/home/puweiwang/SCASverify/node_modules/fabric-client/lib/User.js:255:11)
+    at <anonymous>
+[2018-10-12 19:40:39.343] [ERROR] Query - Error: Private key missing from key store. Can not establish the signing identity for user admin_cc_gfe
+    at _cryptoSuite.importKey.then.then (/home/puweiwang/SCASverify/node_modules/fabric-client/lib/User.js:255:11)
+    at <anonymous>
+[2018-10-12 19:40:49.312] [ERROR] Query - Error: Private key missing from key store. Can not establish the signing identity for user admin_cc_gfe
+    at _cryptoSuite.importKey.then.then (/home/puweiwang/SCASverify/node_modules/fabric-client/lib/User.js:255:11)
+    at <anonymous>
+[2018-10-12 19:40:59.396] [ERROR] Query - Error: Private key missing from key store. Can not establish the signing identity for user admin_cc_gfe
+    at _cryptoSuite.importKey.then.then (/home/puweiwang/SCASverify/node_modules/fabric-client/lib/User.js:255:11)
+    at <anonymous>
+[2018-10-12 19:42:33.193] [ERROR] Query - Error: Private key missing from key store. Can not establish the signing identity for user admin_cc_gfe
+    at _cryptoSuite.importKey.then.then (/home/puweiwang/SCASverify/node_modules/fabric-client/lib/User.js:255:11)
+    at <anonymous>
+[2018-10-12 19:42:43.101] [ERROR] Query - Error: Private key missing from key store. Can not establish the signing identity for user admin_cc_gfe
+    at _cryptoSuite.importKey.then.then (/home/puweiwang/SCASverify/node_modules/fabric-client/lib/User.js:255:11)
+    at <anonymous>
+[2018-10-12 19:42:53.078] [ERROR] Query - Error: Private key missing from key store. Can not establish the signing identity for user admin_cc_gfe
+    at _cryptoSuite.importKey.then.then (/home/puweiwang/SCASverify/node_modules/fabric-client/lib/User.js:255:11)
+    at <anonymous>
+[2018-10-12 19:43:03.093] [ERROR] Query - Error: Private key missing from key store. Can not establish the signing identity for user admin_cc_gfe
+    at _cryptoSuite.importKey.then.then (/home/puweiwang/SCASverify/node_modules/fabric-client/lib/User.js:255:11)
+    at <anonymous>
+[2018-10-12 19:43:13.155] [ERROR] Query - Error: Private key missing from key store. Can not establish the signing identity for user admin_cc_gfe
+    at _cryptoSuite.importKey.then.then (/home/puweiwang/SCASverify/node_modules/fabric-client/lib/User.js:255:11)
+    at <anonymous>
+[2018-10-12 19:43:23.168] [ERROR] Query - Error: Private key missing from key store. Can not establish the signing identity for user admin_cc_gfe
+    at _cryptoSuite.importKey.then.then (/home/puweiwang/SCASverify/node_modules/fabric-client/lib/User.js:255:11)
+    at <anonymous>
