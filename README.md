@@ -1,304 +1,255 @@
-## Balance transfer
+# 基于区块链的服务协商框架
 
-A sample Node.js app to demonstrate **__fabric-client__** & **__fabric-ca-client__** Node.js SDK APIs
+该平台在缺乏信任且无中心化的环境中为用户和服务提供方提供了一个自主协商的服务交易平台，保证交易的安全、合理。
 
-### Prerequisites and setup:
+# 上手指南
 
-* [Docker](https://www.docker.com/products/overview) - v1.12 or higher
-* [Docker Compose](https://docs.docker.com/compose/overview/) - v1.8 or higher
-* [Git client](https://git-scm.com/downloads) - needed for clone commands
-* **Node.js** v8.4.0 or higher
-* [Download Docker images](http://hyperledger-fabric.readthedocs.io/en/latest/samples.html#binaries)
+以下指南将帮助你在本地机器上安装和运行该项目，进行开发和测试。
 
-```
-cd fabric-samples/balance-transfer/
-```
+## 安装要求
 
-Once you have completed the above setup, you will have provisioned a local network with the following docker container configuration:
+[curl]( https://curl.haxx.se/)-v7.47.0（根据系统版本下载对应版本curl）
 
-* 2 CAs
-* A SOLO orderer
-* 4 peers (2 peers per Org)
+[docker](https://docs.docker.com/compose/overview/)-v17.06或以上版本
 
-#### Artifacts
-* Crypto material has been generated using the **cryptogen** tool from Hyperledger Fabric and mounted to all peers, the orderering node and CA containers. More details regarding the cryptogen tool are available [here](http://hyperledger-fabric.readthedocs.io/en/latest/build_network.html#crypto-generator).
-* An Orderer genesis block (genesis.block) and channel configuration transaction (mychannel.tx) has been pre generated using the **configtxgen** tool from Hyperledger Fabric and placed within the artifacts folder. More details regarding the configtxgen tool are available [here](http://hyperledger-fabric.readthedocs.io/en/latest/build_network.html#configuration-transaction-generator).
+[docker-compose](https://docs.docker.com/compose/overview/)-v1.14或以上版本
 
-## Running the sample program
+[golang]( https://golang.google.cn/)-v1.10或以上版本
 
-There are two options available for running the balance-transfer sample
-For each of these options, you may choose to run with chaincode written in golang or in node.js.
+node.js：  v8.9或以上版本
 
-### Option 1:
+## 安装步骤
 
-##### Terminal Window 1
+### 安装curl：
 
-* Launch the network using docker-compose
+1、	官网找到相应的版本，下载压缩包；
+
+2、	在终端解压压缩包：
 
 ```
-docker-compose -f artifacts/docker-compose.yaml up
-```
-##### Terminal Window 2
-
-* Install the fabric-client and fabric-ca-client node modules
-
-```
-npm install
+tar -zxvf curl-7.47.0.tar.gz
 ```
 
-* Start the node app on PORT 4000
+3、	进入到文件夹下：
 
 ```
-PORT=4000 node app
+cd curl-7.47.0
 ```
 
-##### Terminal Window 3
-
-* Execute the REST APIs from the section [Sample REST APIs Requests](https://github.com/hyperledger/fabric-samples/tree/master/balance-transfer#sample-rest-apis-requests)
-
-
-### Option 2:
-
-##### Terminal Window 1
+4、	终端命令
 
 ```
-cd fabric-samples/balance-transfer
+make
 
+make install
+```
+
+### 安装docker：
+
+1、	如果安装过旧版本的docker，先将其移除：
+
+```
+sudo apt-get remove docker-engine docker.io
+```
+
+2、	安装包允许apt通过HTTPS使用仓库：
+
+```
+sudo apt-get install apt-transport-https ca-certificates curl software-properties-common
+```
+
+3、	添加docker官方GPG key：
+```
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+
+sudo apt-key fingerprint 0EBFCD88
+```
+
+4、	设置docker稳定版仓库：
+
+```
+sudo add-apt-repository “deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable”
+```
+
+5、	更新apt索引源：
+
+```
+sudo apt-get update
+```
+
+6、	安装docker CE（社区版）：
+
+```
+sudo apt-get install docker-ce
+```
+
+7、	如果上一步出现错误，检查一下版本：
+
+```
+apt-cache madison docker-ce
+```
+
+8、	安装指定版本：
+
+```
+sudo apt-get install docker-ce=<version>
+```
+
+9、	测试docker是否安装成功：
+
+```
+sudo docker run hello world
+```
+
+10、	查看docker版本：
+
+```
+docker -v
+```
+
+### 安装docker-compose：
+1、	使用命令行下载docker-compose：
+
+```
+sudo curl -L https://github.com/docker/compose/releases/download/1.17.0/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+```
+
+2、	授权：
+
+```
+sudo chmod +x /usr/local/bin/docker-compose
+```
+
+3、	查看版本信息：
+
+```
+docker-compose –version
+```
+
+### 安装golang：
+1、	安装：
+
+```
+sudo apt-get install golang
+```
+2、	设置环境变量：打开配置文件
+
+```
+gedit /etc/profile
+```
+
+末尾添加如下信息：
+
+```
+export GOPATH=$HOME/go
+export PATH=$PATH:$GOPATH/bin
+```
+
+3、	配置文件生效：
+
+```
+source /etc/profile
+```
+
+4、	查看golang版本：
+
+```
+go version
+```
+
+### 安装node.js：
+1、	安装node.js：
+
+```
+sudo apt-get install nodejs
+```
+
+2、	安装npm：
+
+```
+sudo apt-get install npm
+```
+
+### 下载镜像：
+
+我们使用fabric1.1版本镜像，使用官网链接下载即可：
+
+```
+curl -sSL https://goo.gl/6wtTN5 | bash -s 1.1.0-rc1
+```
+
+## 网络要求
+
+包括orderer节点、peer节点、kafka节点和zookeeper节点，每种节点的个数可以根据自己的需要在配置文件中进行修改即可，在我们的项目中，使用了3个orderer节点、4个peer节点（两个组织，每个组织两个peer节点）、4个kafka节点、3个zookeeper节点（个数必须是奇数）
+
+## 部署
+
+SCSP主要是区块链部分，提供了关于服务交易的一些功能，部署位置没有特别要求，为了操作方便，我们放在根目录下即可；  
+ctrip主要提供展示界面，需要将该文件夹部署在/tomcat/apache-tomcat-8.5.28/webapps/ROOT路径下
+
+## 启动
+
+### Terminal 1：启动网络
+
+进入SCSP文件夹：
+
+```
+cd SCSP
+```
+
+运行脚本：
+
+```
 ./runApp.sh
-
 ```
 
-* This lauches the required network on your local machine
-* Installs the fabric-client and fabric-ca-client node modules
-* And, starts the node app on PORT 4000
+### Terminal 2
 
-##### Terminal Window 2
-
-
-In order for the following shell script to properly parse the JSON, you must install ``jq``:
-
-instructions [https://stedolan.github.io/jq/](https://stedolan.github.io/jq/)
-
-With the application started in terminal 1, next, test the APIs by executing the script - **testAPIs.sh**:
-```
-cd fabric-samples/balance-transfer
-
-## To use golang chaincode execute the following command
-
-./testAPIs.sh -l golang
-
-## OR use node.js chaincode
-
-./testAPIs.sh -l node
-```
-
-
-## Sample REST APIs Requests
-
-### Login Request
-
-* Register and enroll new users in Organization - **Org1**:
-
-`curl -s -X POST http://localhost:4000/users -H "content-type: application/x-www-form-urlencoded" -d 'username=Jim&orgName=Org1'`
-
-**OUTPUT:**
+进入scripts文件夹：
 
 ```
-{
-  "success": true,
-  "secret": "RaxhMgevgJcm",
-  "message": "Jim enrolled Successfully",
-  "token": "<put JSON Web Token here>"
-}
+cd scripts
 ```
 
-The response contains the success/failure status, an **enrollment Secret** and a **JSON Web Token (JWT)** that is a required string in the Request Headers for subsequent requests.
-
-### Create Channel request
+运行install脚本：
 
 ```
-curl -s -X POST \
-  http://localhost:4000/channels \
-  -H "authorization: Bearer <put JSON Web Token here>" \
-  -H "content-type: application/json" \
-  -d '{
-	"channelName":"mychannel",
-	"channelConfigPath":"../artifacts/channel/mychannel.tx"
-}'
+./install.sh
 ```
 
-Please note that the Header **authorization** must contain the JWT returned from the `POST /users` call
+注意：运行该脚本后，可能会提示未安装`jq`，按照提示要求安装即可；该脚本的作用是创建channel、把节点加入到channel中、在每个组织中安装链码（chaincode）并在节点上实例化；
 
-### Join Channel request
-
-```
-curl -s -X POST \
-  http://localhost:4000/channels/mychannel/peers \
-  -H "authorization: Bearer <put JSON Web Token here>" \
-  -H "content-type: application/json" \
-  -d '{
-	"peers": ["peer0.org1.example.com","peer1.org1.example.com"]
-}'
-```
-### Install chaincode
+运行regist脚本：
 
 ```
-curl -s -X POST \
-  http://localhost:4000/chaincodes \
-  -H "authorization: Bearer <put JSON Web Token here>" \
-  -H "content-type: application/json" \
-  -d '{
-	"peers": ["peer0.org1.example.com","peer1.org1.example.com"],
-	"chaincodeName":"mycc",
-	"chaincodePath":"github.com/example_cc/go",
-	"chaincodeType": "golang",
-	"chaincodeVersion":"v0"
-}'
-```
-**NOTE:** *chaincodeType* must be set to **node** when node.js chaincode is used and *chaincodePath* must be set to the location of the node.js chaincode. Also put in the $PWD
-```
-ex:
-curl -s -X POST \
-  http://localhost:4000/chaincodes \
-  -H "authorization: Bearer <put JSON Web Token here>" \
-  -H "content-type: application/json" \
-  -d '{
-	"peers": ["peer0.org1.example.com","peer1.org1.example.com"],
-	"chaincodeName":"mycc",
-	"chaincodePath":"$PWD/artifacts/src/github.com/example_cc/node",
-	"chaincodeType": "node",
-	"chaincodeVersion":"v0"
-}'
+./regist.sh
 ```
 
-### Instantiate chaincode
+该脚本的作用是用户注册，为进行注册的用户生成身份凭证token；
+
+运行task脚本：
 
 ```
-curl -s -X POST \
-  http://localhost:4000/channels/mychannel/chaincodes \
-  -H "authorization: Bearer <put JSON Web Token here>" \
-  -H "content-type: application/json" \
-  -d '{
-	"peers": ["peer0.org1.example.com","peer1.org1.example.com"],
-	"chaincodeName":"mycc",
-	"chaincodeVersion":"v0",
-	"chaincodeType": "golang",
-	"args":["a","100","b","200"]
-}'
-```
-**NOTE:** *chaincodeType* must be set to **node** when node.js chaincode is used
-
-### Invoke request
-
-```
-curl -s -X POST \
-  http://localhost:4000/channels/mychannel/chaincodes/mycc \
-  -H "authorization: Bearer <put JSON Web Token here>" \
-  -H "content-type: application/json" \
-  -d '{
-	"peers": ["peer0.org1.example.com","peer1.org1.example.com"],
-	"fcn":"move",
-	"args":["a","b","10"]
-}'
-```
-**NOTE:** Ensure that you save the Transaction ID from the response in order to pass this string in the subsequent query transactions.
-
-### Chaincode Query
-
-```
-curl -s -X GET \
-  "http://localhost:4000/channels/mychannel/chaincodes/mycc?peer=peer0.org1.example.com&fcn=query&args=%5B%22a%22%5D" \
-  -H "authorization: Bearer <put JSON Web Token here>" \
-  -H "content-type: application/json"
+./task.sh
 ```
 
-### Query Block by BlockNumber
+该脚本的作用是用户将所需服务的性能要求写入智能合约，并发布任务；
+
+运行listener脚本：
 
 ```
-curl -s -X GET \
-  "http://localhost:4000/channels/mychannel/blocks/1?peer=peer0.org1.example.com" \
-  -H "authorization: Bearer <put JSON Web Token here>" \
-  -H "content-type: application/json"
+./listener.sh
 ```
 
-### Query Transaction by TransactionID
+该脚本的作用是将服务提供方加入到候选队列中；
+
+运行request脚本：
 
 ```
-curl -s -X GET http://localhost:4000/channels/mychannel/transactions/<put transaction id here>?peer=peer0.org1.example.com \
-  -H "authorization: Bearer <put JSON Web Token here>" \
-  -H "content-type: application/json"
-```
-**NOTE**: The transaction id can be from any previous invoke transaction, see results of the invoke request, will look something like `8a95b1794cb17e7772164c3f1292f8410fcfdc1943955a35c9764a21fcd1d1b3`.
-
-
-### Query ChainInfo
-
-```
-curl -s -X GET \
-  "http://localhost:4000/channels/mychannel?peer=peer0.org1.example.com" \
-  -H "authorization: Bearer <put JSON Web Token here>" \
-  -H "content-type: application/json"
+./request.sh
 ```
 
-### Query Installed chaincodes
+该脚本的作用是在众多的服务提供方提供的服务中选择一个性能最优的作为最后所使用的服务；
 
-```
-curl -s -X GET \
-  "http://localhost:4000/chaincodes?peer=peer0.org1.example.com&type=installed" \
-  -H "authorization: Bearer <put JSON Web Token here>" \
-  -H "content-type: application/json"
-```
+至此，我们完成了通过脚本运行测试整个项目，可以通过界面查看最终平台展示效果。
 
-### Query Instantiated chaincodes
-
-```
-curl -s -X GET \
-  "http://localhost:4000/chaincodes?peer=peer0.org1.example.com&type=instantiated" \
-  -H "authorization: Bearer <put JSON Web Token here>" \
-  -H "content-type: application/json"
-```
-
-### Query Channels
-
-```
-curl -s -X GET \
-  "http://localhost:4000/channels?peer=peer0.org1.example.com" \
-  -H "authorization: Bearer <put JSON Web Token here>" \
-  -H "content-type: application/json"
-```
-
-### Clean the network
-
-The network will still be running at this point. Before starting the network manually again, here are the commands which cleans the containers and artifacts.
-
-```
-docker rm -f $(docker ps -aq)
-docker rmi -f $(docker images | grep dev | awk '{print $3}')
-rm -rf fabric-client-kv-org[1-2]
-```
-
-### Network configuration considerations
-
-You have the ability to change configuration parameters by either directly editing the network-config.yaml file or provide an additional file for an alternative target network. The app uses an optional environment variable "TARGET_NETWORK" to control the configuration files to use. For example, if you deployed the target network on Amazon Web Services EC2, you can add a file "network-config-aws.yaml", and set the "TARGET_NETWORK" environment to 'aws'. The app will pick up the settings inside the "network-config-aws.yaml" file.
-
-#### IP Address** and PORT information
-
-If you choose to customize your docker-compose yaml file by hardcoding IP Addresses and PORT information for your peers and orderer, then you MUST also add the identical values into the network-config.yaml file. The url and eventUrl settings will need to be adjusted to match your docker-compose yaml file.
-
-```
-peer1.org1.example.com:
-  url: grpcs://x.x.x.x:7056
-  eventUrl: grpcs://x.x.x.x:7058
-
-```
-
-#### Discover IP Address
-
-To retrieve the IP Address for one of your network entities, issue the following command:
-
-```
-# this will return the IP Address for peer0
-docker inspect peer0 | grep IPAddress
-```
-
-<a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.
