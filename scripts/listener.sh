@@ -31,7 +31,7 @@ curl -s -X POST \
   -H "content-type: application/json" \
   -d "{
         \"role\":\"requester\",
-        \"strategyFile\":\"request-strategy-jim.json\"
+        \"strategyFile\":\"request-strategy-Jim.json\"
 }"
 echo
 echo
@@ -44,7 +44,7 @@ curl -s -X POST \
   -H "content-type: application/json" \
   -d "{
         \"role\":\"requester\",
-        \"strategyFile\":\"request-strategy-tim.json\"
+        \"strategyFile\":\"request-strategy-Tim.json\"
 }"
 echo
 echo
@@ -57,7 +57,7 @@ curl -s -X POST \
   -H "content-type: application/json" \
   -d "{
         \"role\":\"requester\",
-        \"strategyFile\":\"request-strategy-perry.json\"
+        \"strategyFile\":\"request-strategy-Perry.json\"
 }"
 echo
 echo
@@ -71,7 +71,7 @@ curl -s -X POST \
   -H "content-type: application/json" \
   -d "{
         \"role\":\"provider\",
-        \"strategyFile\":\"response-strategy-qunar.json\"
+        \"strategyFile\":\"response-strategy-Qunar.json\"
 }"
 echo
 echo
@@ -84,7 +84,7 @@ curl -s -X POST \
   -H "content-type: application/json" \
   -d "{
         \"role\":\"provider\",
-        \"strategyFile\":\"response-strategy-ctrip.json\"
+        \"strategyFile\":\"response-strategy-Ctrip.json\"
 }"
 echo
 echo
@@ -97,7 +97,7 @@ curl -s -X POST \
   -H "content-type: application/json" \
   -d "{
         \"role\":\"provider\",
-        \"strategyFile\":\"response-strategy-ali.json\"
+        \"strategyFile\":\"response-strategy-Ali.json\"
 }"
 echo
 echo
@@ -110,7 +110,7 @@ curl -s -X POST \
   -H "content-type: application/json" \
   -d "{
         \"role\":\"provider\",
-        \"strategyFile\":\"response-strategy-dbiir.json\"
+        \"strategyFile\":\"response-strategy-Dbiir.json\"
 }"
 echo
 echo

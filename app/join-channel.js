@@ -157,5 +157,4 @@ var joinChannel = async function(channel_name, peers, username, org_name) {
 		throw new Error(message);
 	}
 };
-
 exports.joinChannel = joinChannel;

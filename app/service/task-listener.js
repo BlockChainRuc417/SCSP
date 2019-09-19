@@ -20,6 +20,7 @@ var eventMap = new Map();
 
 var add = function(taskName, peer, channelName, chaincodeName, providerName, orgname){
   try{
+    //logger.debug(strategy.responseStrategyMap);
     var responseStrategyPath = strategy.responseStrategyMap.get(providerName);
     if (!responseStrategyPath) {
       logger.error("no strategy file for provider: " + providerName);
@@ -28,10 +29,13 @@ var add = function(taskName, peer, channelName, chaincodeName, providerName, org
 
     var key = taskName + "~" + providerName;
     var listenerIndex = listenerMap.get(key);
+    //logger.debug(listenerIndex);
+    //return "0";
 
     if (!listenerIndex) {
       event.on(taskName, function(requesterName, roundIndex){
         try{
+          //logger.debug(requesterName);
           response.strategyByTaskNameRound(taskName, requesterName, roundIndex, peer, channelName, chaincodeName, providerName, orgname);
         } catch (err) {
           logger.error(err);
@@ -56,14 +60,18 @@ var add = function(taskName, peer, channelName, chaincodeName, providerName, org
 	}
 }
 
+
 var remove = function(taskName, providerName){
   try{
     var key = taskName + "~" + providerName;
     var listenerIndex = listenerMap.get(key);
 
+    //.logger.error(listenerIndex);
+
     if (listenerIndex) {
       listeners = event.listeners(taskName);
       listener = listeners[listenerIndex-1];
+      //logger.error(listener);
 
       event.removeListener(taskName, listener);
       listenerMap.delete(key);

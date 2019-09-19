@@ -21,7 +21,7 @@ starttime=$(date +%s)
 
 echo "export port=$port;"
 echo "export cc_name=$cc_name;"
-#echo "export jim_gfe_token=$jim_gfe_token;"
+#echo "export org_token=$org_token;"
 
 
 
@@ -41,8 +41,12 @@ echo
 echo
 echo
 
+#       \"channel\":\"mychannel\",
+#       \"peer\":\"peer0.gfe.example.com\",
 
-#\"taskNames\":[\"hotel\",\"ticket-airline\",\"rent-car\",\"scenic-spot\"]
+
+
+#[\"hotel\",\"ticket-airline\",\"rent-car\",\"scenic-spot\"],
 
 #echo
 #echo

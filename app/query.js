@@ -59,7 +59,6 @@ var queryChaincode = async function(peer, channelName, chaincodeName, args, fcn,
 		return error.toString();
 	}
 };
-
 var getBlockByNumber = async function(peer, channelName, blockNumber, username, org_name) {
 	try {
 		// first setup the client for this org
@@ -85,7 +84,6 @@ var getBlockByNumber = async function(peer, channelName, blockNumber, username, 
 		return error.toString();
 	}
 };
-
 var getTransactionByID = async function(peer, channelName, trxnID, username, org_name) {
 	try {
 		// first setup the client for this org
@@ -111,7 +109,6 @@ var getTransactionByID = async function(peer, channelName, trxnID, username, org
 		return error.toString();
 	}
 };
-
 var getBlockByHash = async function(peer, channelName, hash, username, org_name) {
 	try {
 		// first setup the client for this org
@@ -137,7 +134,6 @@ var getBlockByHash = async function(peer, channelName, hash, username, org_name)
 		return error.toString();
 	}
 };
-
 var getChainInfo = async function(peer, channelName, username, org_name) {
 	try {
 		// first setup the client for this org
@@ -164,7 +160,6 @@ var getChainInfo = async function(peer, channelName, username, org_name) {
 		return error.toString();
 	}
 };
-
 //getInstalledChaincodes
 var getInstalledChaincodes = async function(peer, channelName, type, username, org_name) {
 	try {
@@ -216,7 +211,6 @@ var getInstalledChaincodes = async function(peer, channelName, type, username, o
 		return error.toString();
 	}
 };
-
 var getChannels = async function(peer, username, org_name) {
 	try {
 		// first setup the client for this org
@@ -234,6 +228,8 @@ var getChannels = async function(peer, username, org_name) {
 				}
 				channelNames.push(channel);
 			}
+			//logger.debug(channelNames);
+			//return response;
 			return channelNames;
 		} else {
 			logger.error('response_payloads is null');

@@ -13,7 +13,6 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
 'use strict';
 var log4js = require('log4js');
 var logger = log4js.getLogger('SampleWebApp');
@@ -111,6 +110,7 @@ app.use(function(req, res, next) {
 	}
 
 	var token = req.token;
+	//logger.info(req);
 	jwt.verify(token, app.get('secret'), function(err, decoded) {
 		if (err) {
 			res.send({
@@ -121,6 +121,17 @@ app.use(function(req, res, next) {
 			});
 			return;
 		} else {
+			// add the decoded user name and org name to the request object
+			// for the downstream code to use
+
+			//var info = {
+			//	username: decoded.username,
+			//	orgname: decoded.orgname,
+			//	channelname: decoded.channelname,
+			//	peername: decoded.peername,
+			//	role: decoded.role
+			//}
+
 			req.username = decoded.username;
 			req.orgname = decoded.orgname;
 			req.channelname = decoded.channelname;
@@ -143,6 +154,16 @@ initialize();
 server.timeout = 240000;
 
 async function initialize(){
+	/*var channelName = hfc.getConfigSetting('channelName');
+	var admins = hfc.getConfigSetting('admins');
+	var username = admins[0].username;
+	var orgname = admins[0].orgname;
+	var peer = (hfc.getConfigSetting(orgname))[0].peer;
+  var chaincodeName = hfc.getConfigSetting('chaincodeName');
+
+	var client = await helper.getClientForOrg(orgname);
+	var admin = await client.getUserContext(username, true);*/
+
 	var channelname = hfc.getConfigSetting('channels')[0]['name'];
 
 	var admins = hfc.getConfigSetting('admins');
@@ -152,11 +173,14 @@ async function initialize(){
 	var channel =  hfc.getConfigSetting(channelname);
 	var peer = channel['orgs'][orgname][0]['peer'];
 
+	//logger.error(orgname);
+
 	var client = await helper.getClientForOrg(orgname);
 	var admin = await client.getUserContext(username, true);
 
 	var channelName = channel['name'];
 	var chaincodeName = hfc.getConfigSetting('chaincodeName');
+	//logger.debug("test: " + Object.keys(channel['orgs']));
 
 	if (admin) {
 		//查询blockchain里所有的task
@@ -171,6 +195,7 @@ async function initialize(){
 		} else {
 			var taskJsons = JSON.parse(tasksAsBytes);
 			var taskNum = taskJsons.length;
+			//logger.debug(taskNum);
 			for (var t=0;t<taskNum;t++) {
 				var taskJson = taskJsons[t];
 				var taskId = taskJson.id;
@@ -596,18 +621,27 @@ app.get('/channels', async function(req, res) {
 // enroll blockchain users
 app.post('/users', async function(req, res) {
 	var channelName = req.body.channel;
+	//var chaincodeName = req.body.chaincode;
 	var peer = req.body.peer;
 	var username = req.body.userName;
+	//var password = req.body.password;
 	var orgname = req.body.orgName;
 	var description = req.body.description;
 
 	logger.debug('End point : /users');
 	logger.debug('channelName : ' + channelName);
+	//logger.debug('chaincodeName : ' + chaincodeName);
 	logger.debug('peer : ' + peer);
 	logger.debug('User name : ' + username);
+	//logger.debug('password : ' + password);
 	logger.debug('Org name  : ' + orgname);
 	logger.debug('Description  : ' + description);
 
+
+	//if (!chaincodeName) {
+	//	res.json(getErrorMessage('\'chaincodeName\''));
+	//	return;
+	//}
 	if (!channelName) {
 		res.json(getErrorMessage('\'channelName\''));
 		return;
@@ -620,6 +654,10 @@ app.post('/users', async function(req, res) {
 		res.json(getErrorMessage('\'username\''));
 		return;
 	}
+	//if (!password) {
+	//	res.json(getErrorMessage('\'password\''));
+	//	return;
+	//}
 	if (!orgname) {
 		res.json(getErrorMessage('\'orgname\''));
 		return;
@@ -668,6 +706,7 @@ app.post('/users', async function(req, res) {
 	}
 
 });
+
 
 // return new token
 app.post('/newtoken', async function(req, res) {
@@ -731,11 +770,13 @@ app.post('/joinchaincode', async function(req, res) {
 	var channelName = req.channelname;
 	var chaincodeName = req.body.chaincode;
 	var peer = req.peername;
+	//var userName = req.username;
 	var userDes = req.body.description;
 
 	logger.debug('channelName : ' + channelName);
 	logger.debug('chaincodeName : ' + chaincodeName);
 	logger.debug('peer : ' + peer);
+	//logger.debug('userName : ' + userName);
 	logger.debug('userDes : ' + userDes);
 
 	if (!chaincodeName) {
@@ -750,6 +791,10 @@ app.post('/joinchaincode', async function(req, res) {
 		res.json(getErrorMessage('\'peer\''));
 		return;
 	}
+	//if (!userName) {
+	//	res.json(getErrorMessage('\'userName\''));
+	//	return;
+	//}
 	if (!userDes) {
 		res.json(getErrorMessage('\'userDes\''));
 		return;
@@ -767,6 +812,7 @@ app.post('/writetask', async function(req, res) {
 	var peer = req.peername;
 	var taskName = req.body.name;
 	var requesterName = req.username;
+	//var requesterName = req.body.requester;
 	var taskDes = req.body.description;
 
 	var taskKey = taskName + "~" + requesterName;
@@ -827,6 +873,7 @@ app.post('/writerequest', async function(req, res) {
 	var peer = req.peername;
 	var taskId = req.body.taskId;
 	var requesterName = req.username;
+	//var requesterName = req.body.requester;
   var request = req.body.request;
 
 	logger.debug('channelName : ' + channelName);
@@ -882,6 +929,7 @@ app.post('/writeresponse', async function(req, res) {
 	var requestId = req.body.requestId;
 	var requesterName = req.body.requester;
 	var providerName = req.username;
+	//let providerName = req.body.provider;
 	var taskId = req.body.taskId;
   var response = req.body.response;
 	var url = req.body.url;
@@ -962,6 +1010,7 @@ app.post('/check', async function(req, res) {
 	var chaincodeName = req.body.chaincode;
 	var peer = req.body.peer;
 	var taskId = req.body.taskId;
+	//var requesterName = req.username;
 
 	logger.debug('channelName : ' + channelName);
 	logger.debug('chaincodeName : ' + chaincodeName);
@@ -985,7 +1034,17 @@ app.post('/check', async function(req, res) {
 		res.json(getErrorMessage('\'taskId\''));
 		return;
 	}
+	//if (!requesterName) {
+	//	res.json(getErrorMessage('\'requesterName\''));
+	//	return;
+	//}
 
+	//var taskKey = taskName + "~" + requesterName;
+	//var taskId = request.taskMap.get(key);
+  //if (!taskId) {
+	//	res.send("no task " + taskName + ", requester " + requesterName);
+	//}
+  //logger.debug(chaincodeName);
 	let message = await negoUtil.check(taskId, peer, channelName, chaincodeName, req.username, req.orgname);
 	res.send(message);
 });
@@ -998,6 +1057,7 @@ app.post('/getagreement', async function(req, res) {
 	var chaincodeName = req.body.chaincode;
 	var peer = req.peername;
 	var requester = req.username;
+
 	var taskname = req.body.taskname;
 
 	logger.debug('channelName : ' + channelName);
@@ -1005,6 +1065,7 @@ app.post('/getagreement', async function(req, res) {
 	logger.debug('peer : ' + peer);
 	logger.debug('requester : ' + requester);
 	logger.debug('taskname : ' + taskname);
+
 
 	if (!chaincodeName) {
 		res.json(getErrorMessage('\'chaincodeName\''));
@@ -1075,6 +1136,7 @@ app.post('/delete_task', async function(req, res) {
 	var chaincodeName = req.body.chaincode;
 	var peer = req.body.peer;
 	var taskName = req.body.taskName;
+	//var requesterName = req.username;
 	var requesterName = req.body.requesterName;
 
 	var role = req.role;
@@ -1082,6 +1144,7 @@ app.post('/delete_task', async function(req, res) {
 		res.json(getErrorRoleMessage(requesterName, "delete_task"));
 		return;
 	}
+
 
 	logger.debug('channelName : ' + channelName);
 	logger.debug('chaincodeName : ' + chaincodeName);
@@ -1121,6 +1184,8 @@ app.post('/delete_serviceTX', async function(req, res) {
 	var channelName = req.body.channel;
 	var chaincodeName = req.body.chaincode;
 	var peer = req.body.peer;
+
+
 	var role = req.role;
 	if (role!="administrator") {
 		res.json(getErrorRoleMessage(requesterName, "delete_serviceTX"));
@@ -1130,6 +1195,7 @@ app.post('/delete_serviceTX', async function(req, res) {
 	logger.debug('channelName : ' + channelName);
 	logger.debug('chaincodeName : ' + chaincodeName);
 	logger.debug('peer : ' + peer);
+
 
 	if (!chaincodeName) {
 		res.json(getErrorMessage('\'chaincodeName\''));
@@ -1143,6 +1209,7 @@ app.post('/delete_serviceTX', async function(req, res) {
 		res.json(getErrorMessage('\'peer\''));
 		return;
 	}
+
 
 	let message = await negoUtil.deleteServiceTX(peer, channelName, chaincodeName, req.username, req.orgname);
 	res.send(message);
@@ -1209,6 +1276,7 @@ app.post('/invoke', async function(req, res) {
 		res.json(getErrorRoleMessage(requesterName, "invoke"));
 		return;
 	}
+
 	var channelName = req.body.channel;
 	var chaincodeName = req.body.chaincode;
 	var peer = req.body.peer;
@@ -1304,6 +1372,56 @@ app.post('/service', async function(req, res) {
 	}
 });
 
+
+// Test
+/*app.post('/test', async function(req, res) {
+	logger.debug('==================== Test ==================');
+	let channelName = req.body.channel;
+	let chaincodeName = req.body.chaincode;
+	let peer = req.body.peer;
+	let taskName = req.body.name;
+	let requesterName = req.username;
+	//let requesterName = req.body.requester;
+	let taskDes = req.body.description;
+
+	logger.debug('channelName : ' + channelName);
+	logger.debug('chaincodeName : ' + chaincodeName);
+	logger.debug('peer : ' + peer);
+	logger.debug('taskName : ' + taskName);
+	logger.debug('requesterName : ' + requesterName);
+	logger.debug('taskDescription : ' + taskDes);
+
+	if (!chaincodeName) {
+		res.json(getErrorMessage('\'chaincodeName\''));
+		return;
+	}
+	if (!channelName) {
+		res.json(getErrorMessage('\'channelName\''));
+		return;
+	}
+	if (!peer) {
+		res.json(getErrorMessage('\'peerName\''));
+		return;
+	}
+	if (!taskName) {
+		res.json(getErrorMessage('\'taskName\''));
+		return;
+	}
+	if (!requesterName) {
+		res.json(getErrorMessage('\'requesterName\''));
+		return;
+	}
+	if (!taskDes) {
+		res.json(getErrorMessage('\'taskDes\''));
+		return;
+	}
+
+	let task = [taskName, requesterName, taskDes];
+
+	let message = await negoUtil.mytest(task, peer, channelName, chaincodeName, req.username, req.orgname);
+	res.send(message);
+});*/
+
 // CronTest
 app.post('/schedule', async function(req, res) {
 	logger.debug('==================== Schedule ==================');
@@ -1313,6 +1431,7 @@ app.post('/schedule', async function(req, res) {
 		res.json(getErrorRoleMessage(requesterName, "schedule"));
 		return;
 	}
+
 	var channelName = req.body.channel;
 	var chaincodeName = req.body.chaincode;
 	var peer = req.body.peer;
@@ -1322,6 +1441,7 @@ app.post('/schedule', async function(req, res) {
 	logger.debug('chaincodeName : ' + chaincodeName);
 	logger.debug('peer : ' + peer);
 	logger.debug('taskId : ' + taskId);
+
 
 	if (!chaincodeName) {
 		res.json(getErrorMessage('\'chaincodeName\''));
@@ -1342,6 +1462,21 @@ app.post('/schedule', async function(req, res) {
 
 	await negoUtil.scheduledTransfer(taskId, peer, channelName, chaincodeName, req.username, req.orgname);
 
+	//let i = 1;
+
+	//var date = new Date("2018-04-11 15:07:00 GMT+8");
+	//logger.debug(date);
+
+	//var rule = new schedule.RecurrenceRule();
+	//rule.second = 5;
+
+	//schedule.scheduleJob(rule, async function(){
+		//logger.debug(i);
+		//i++;
+		//let message = await negoUtil.mytest(task, peer, channelName, chaincodeName, req.username, req.orgname);
+		//let message = await query.queryChaincode(peer, channelName, chaincodeName, "[]", "queryTask", req.username, req.orgname);
+	//});
+
   res.send("Scheduled Job!\n");
 });
 
@@ -1353,11 +1488,15 @@ app.post('/request_strategy', async function(req, res) {
 	var peer= req.peername;
 	var taskNames = req.body.taskNames;
 	var requesterName = req.username;
+	//var requesterName = req.body.requesterName;
+	//var roundIndex = req.body.roundIndex;
+	//var strategyPath = req.body.strategyPath;
 
 	logger.debug('channelName : ' + channelName);
 	logger.debug('chaincodeName : ' + chaincodeName);
 	logger.debug('peer : ' + peer);
 	logger.debug('taskNames : ' + taskNames);
+	//logger.debug('roundIndex : ' + roundIndex);
 	logger.debug('requesterName : ' + requesterName);
 
 	if (!chaincodeName) {
@@ -1376,6 +1515,10 @@ app.post('/request_strategy', async function(req, res) {
 		res.json(getErrorMessage('\'taskNames\''));
 		return;
 	}
+	//if (!roundIndex) {
+	//	res.json(getErrorMessage('\'roundIndex\''));
+	//	return;
+	//}
 	if (!requesterName) {
 		res.json(getErrorMessage('\'requesterName\''));
 		return;
@@ -1395,6 +1538,7 @@ app.post('/response_strategy', async function(req, res) {
 	var roundIndex = req.body.roundIndex;
 	var requesterName = req.body.requesterName;
 	var providerName = req.username;
+	//var providerName = req.body.providerName;
 
 	logger.debug('channelName : ' + channelName);
 	logger.debug('chaincodeName : ' + chaincodeName);
@@ -1446,12 +1590,14 @@ app.post('/add_listener', function(req, res) {
 	var channelName = req.channelname;
 	var chaincodeName = req.body.chaincode;
 	var peer = req.peername;
+	//var providerName = req.body.providerName;
 
 	logger.debug('taskName : ' + taskName);
 	logger.debug('providername : ' + providername);
 	logger.debug('channelName : ' + channelName);
 	logger.debug('chaincodeName : ' + chaincodeName);
 	logger.debug('peer : ' + peer);
+
 
 	if (!taskName) {
 		res.json(getErrorMessage('\'taskName\''));
@@ -1483,6 +1629,7 @@ app.post('/remove_listener', function(req, res) {
 
 	var taskName = req.body.taskName;
 	var providerName = req.username;
+	//var providerName = req.body.providerName;
 
 	logger.debug('taskName : ' + taskName);
 	logger.debug('providerName : ' + providerName);
@@ -1503,14 +1650,34 @@ app.post('/remove_listener', function(req, res) {
 app.post('/set_strategy', function(req, res) {
 	logger.debug('==================== set strategy ==================');
 
+	//var channelName = req.body.channel;
+	//var chaincodeName = req.body.chaincode;
+	//var peer = req.body.peer;
+	//var user = req.body.user;
+
 	var user = req.username;
 	var role = req.body.role;
   var strategyFile = req.body.strategyFile;
 
+	//logger.debug('channelName : ' + channelName);
+	//logger.debug('chaincodeName : ' + chaincodeName);
+	//logger.debug('peer : ' + peer);
 	logger.debug('user : ' + user);
 	logger.debug('role : ' + role);
 	logger.debug('strategyFile : ' + strategyFile);
 
+	//if (!chaincodeName) {
+	//	res.json(getErrorMessage('\'chaincodeName\''));
+	//	return;
+	//}
+	//if (!channelName) {
+	//	res.json(getErrorMessage('\'channelName\''));
+	//	return;
+	//}
+	//if (!peer) {
+	//	res.json(getErrorMessage('\'peer\''));
+	//	return;
+	//}
 	if (!user) {
 		res.json(getErrorMessage('\'user\''));
 		return;
@@ -1525,6 +1692,54 @@ app.post('/set_strategy', function(req, res) {
 	}
 
 	let message = strategy.set(user, role, strategyFile);
+	res.send(message);
+});
+
+app.post('/set_strategy_file', function(req, res) {
+	logger.debug('==================== set strategy file ==================');
+
+	//var channelName = req.body.channel;
+	//var chaincodeName = req.body.chaincode;
+	//var peer = req.body.peer;
+	//var user = req.body.user;
+
+	var user = req.username;
+	var role = req.body.role;
+  var strategyFile = req.body.strategyFile;
+
+	//logger.debug('channelName : ' + channelName);
+	//logger.debug('chaincodeName : ' + chaincodeName);
+	//logger.debug('peer : ' + peer);
+	logger.debug('user : ' + user);
+	logger.debug('role : ' + role);
+	logger.debug('strategyFile : ' + strategyFile);
+
+	//if (!chaincodeName) {
+	//	res.json(getErrorMessage('\'chaincodeName\''));
+	//	return;
+	//}
+	//if (!channelName) {
+	//	res.json(getErrorMessage('\'channelName\''));
+	//	return;
+	//}
+	//if (!peer) {
+	//	res.json(getErrorMessage('\'peer\''));
+	//	return;
+	//}
+	if (!user) {
+		res.json(getErrorMessage('\'user\''));
+		return;
+	}
+	if (!role) {
+		res.json(getErrorMessage('\'role\''));
+		return;
+	}
+	if (!strategyFile) {
+		res.json(getErrorMessage('\'strategyFile\''));
+		return;
+	}
+
+	let message = strategy.set_file(user, role, strategyFile);
 	res.send(message);
 });
 

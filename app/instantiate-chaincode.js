@@ -190,5 +190,4 @@ var instantiateChaincode = async function(peers, channelName, chaincodeName, cha
 		throw new Error(message);
 	}
 };
-
 exports.instantiateChaincode = instantiateChaincode;

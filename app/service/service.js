@@ -28,12 +28,26 @@ var request = require('./request.js');
 var negoUtil = require('./negotiation-utils.js');
 var listener = require('./task-listener.js');
 
+//var length = args.length;
+//if (length < 6 ) {
+//	logger.error("Incorrect number of arguments. Expecting 6+");
+//	throw new Error("Incorrect number of arguments. Expecting 6+");
+//}
+
+//var taskId = args[0];
+//var requester = args[1];
+//var provider = args[2];
+
+//logger.debug(taskId);
+
 var agreementMap = new Map();
 
 var invokeRestAPI = async function(peer, channelName, chaincodeName, args, username, org_name) {
+	//logger.error(args);
 
   var requester = args[0];
 	var taskId = args[1];
+	//logger.debug("taskId: " + taskId);
 	var provider = args[2];
 	var toleranceString = args[3];
 	var url = args[4];
@@ -47,7 +61,9 @@ var invokeRestAPI = async function(peer, channelName, chaincodeName, args, usern
     ccArgs[0] = taskId;
     ccArgs[1] = "agreement";
 
+    //logger.debug(args[0] + ", " + args[1]);
     var result = await query.queryChaincode(peer, channelName, chaincodeName, ccArgs, fcn, username, org_name);
+    //logger.debug(agreementAsBytes);
     if (result && typeof result === 'string' &&
             (result.includes('Error:')||result.includes('Error'))){
       logger.error(result);
@@ -60,8 +76,10 @@ var invokeRestAPI = async function(peer, channelName, chaincodeName, args, usern
       return "no agreement for the task: " + taskId;
     }
     agreement = agreementJson[0];
+		//logger.debug(agreement);
 		agreementMap.set(taskId, agreement);
 	}
+	//logger.debug(agreement);
 
 	var aRequester = agreement.requester;
 	var aProvider = agreement.provider;
@@ -86,6 +104,9 @@ var invokeRestAPI = async function(peer, channelName, chaincodeName, args, usern
 		var beginTime = new Date(aBeginTime).getTime();
 		var expireTime = new Date(aExpireTime).getTime();
 
+    //logger.error(beginTime);
+		//logger.error(nowTime);
+		//logger.error(expireTime);
 		if(nowTime < beginTime || nowTime > expireTime){
 			logger.error("no valid time. Current time is " + nowTimeISO + ". Expected between " + aBeginTime + " and " + aExpireTime);
 			return "no valid time. Current time is " + nowTimeISO + ". Expected between " + aBeginTime + " and " + aExpireTime;
@@ -94,6 +115,7 @@ var invokeRestAPI = async function(peer, channelName, chaincodeName, args, usern
 
   var success;
   var tolerance = parseFloat(toleranceString);
+	//logger.error(tolerance);
   var startTime = new Date();
 	var endTime;
 
@@ -108,6 +130,7 @@ var invokeRestAPI = async function(peer, channelName, chaincodeName, args, usern
     }
 	}else if(method == "post") {
 		var postJSONString = args[6];
+		//logger.debug(postJSONString);
     options = {
 			url: url,
 			timeout: aResponseTime*tolerance*1000,
@@ -119,6 +142,10 @@ var invokeRestAPI = async function(peer, channelName, chaincodeName, args, usern
 		}
 	}
 
+	//logger.debug(options);
+
+	//var resultJson;
+
   var message = await new Promise((resolve, reject) => {
     httpRequest(options, async function(error, response, body){
       endTime = new Date();
@@ -126,6 +153,7 @@ var invokeRestAPI = async function(peer, channelName, chaincodeName, args, usern
 	    if(error){
 			  logger.error("error: " + url);
 
+			   //endTime = new Date();
 		    success = "false";
 		    var task = [];
 	      task[0] = requester; //requesterName;
@@ -140,9 +168,11 @@ var invokeRestAPI = async function(peer, channelName, chaincodeName, args, usern
 	      }
 	      agreement = agreementJson[0];
 	      agreementMap.set(taskId, agreement);
+		    //resolve(agreementJson);
 			  messageJson = agreementJson;
 
 	    } else {
+		     //endTime = new Date();
 				 if (response.statusCode == 200){
 					 success = "true";
 				 }else{
@@ -156,6 +186,7 @@ var invokeRestAPI = async function(peer, channelName, chaincodeName, args, usern
 			  	 aResponseTime: aResponseTime,
 				   aThroughput: aThroughput
 			   }
+			   //resolve(resultJson);
 				 messageJson = resultJson;
 	    }
 
@@ -167,6 +198,13 @@ var invokeRestAPI = async function(peer, channelName, chaincodeName, args, usern
 	 return messageJson;
  })
 
+ // if (response.statusCode == 200)
+
+ //.catch(err => {
+   //logger.debug(err);
+//	 return err;
+ //});
+
  //异步将访问记录写入链
  fcn = "saveServiceTX";
  args = [];
@@ -177,6 +215,7 @@ var invokeRestAPI = async function(peer, channelName, chaincodeName, args, usern
  args[4] = success;
  args[5] = startTime.toISOString();
  args[6] = endTime.toISOString();
+ //logger.debug(args);
  invoke.invokeChaincode(peer, channelName, chaincodeName, fcn, args, username, org_name);
 
  return message;
@@ -186,6 +225,13 @@ var invokeRestAPI = async function(peer, channelName, chaincodeName, args, usern
 //在ChainCode里调用Rest API
 var invokeRestAPIviaCC = async function(peer, channelName, chaincodeName, args, username, org_name) {
 	try{
+		//logger.debug("here");
+		//peerNames = [peer];
+   //var submitTime = new Date();
+	 //logger.debug(submitTime.toISOString());
+   //var arglen = args.length;
+	 //args[arglen] = submitTime.toISOString();
+
 		let result = await invokeChaincode(peer, channelName, chaincodeName, args, username, org_name);
 
 		if (result && typeof result === 'string' && result.includes('Error:')) {
@@ -224,6 +270,7 @@ var invokeRestAPIviaCC = async function(peer, channelName, chaincodeName, args, 
 			result = await recovery(task, peer, channelName, chaincodeName, username, org_name);
 			return result;
 		} else {
+			//logger.debug(resultJson);
 			return resultJson;
 		}
 
@@ -233,6 +280,7 @@ var invokeRestAPIviaCC = async function(peer, channelName, chaincodeName, args, 
   }
 
 }
+
 
 var invokeChaincode = async function(peerNames, channelName, chaincodeName, args, username, org_name) {
 	logger.debug(util.format('\n============ invoke transaction on channel %s ============\n', channelName));
@@ -252,11 +300,17 @@ var invokeChaincode = async function(peerNames, channelName, chaincodeName, args
 		// will need the transaction ID string for the event registration later
 		tx_id_string = tx_id.getTransactionID();
 
+		//logger.error(peerNames);
+
+		//peerNames = ['peer1.fabric.gfe.com'];
+
 		// send proposal to endorser
 		var request = {
 			targets: peerNames,
+			//targets:[],
 			chaincodeId: chaincodeName,
 			fcn: "invokeRestAPI",
+			//fcn: "saveServiceTX",
 			args: args,
 			chainId: channelName,
 			txId: tx_id
@@ -270,11 +324,14 @@ var invokeChaincode = async function(peerNames, channelName, chaincodeName, args
 		var proposalResponses = results[0];
 		var proposal = results[1];
 
+		//logger.debug(proposalResponses[0].details)
+
 		// lets have a look at the responses to see if they are
 		// all good, if good they will also include signatures
 		// required to be committed
 		var all_good = true;
 		for (var i in proposalResponses) {
+			//logger.error('test: ' + i);
 			let one_good = false;
 			if (proposalResponses && proposalResponses[i].response &&
 				proposalResponses[i].response.status === 200) {
@@ -295,9 +352,17 @@ var invokeChaincode = async function(peerNames, channelName, chaincodeName, args
         //异步写block，这里不会等待写入block之后再返回
 				commit(channel, tx_id_string, tx_id, proposalResponses, proposal);
 
+				//var resultJson = JSON.parse(proposalResponses[0].response.payload);
+				//logger.debug(resultJson.message);
+				//logger.debug(resultJson.startTime);
+				//logger.debug(resultJson.endTime);
+				//var test = '[{"id":1,"airlineid":1,"type":"one-trip"},{"startTime":2018-06-15}]';
+				//JSON.parse(test);
+
 				return proposalResponses[0].response.payload;
 
 		} else {
+			//logger.debug(proposalResponses[0].details)
 			if(proposalResponses[0].details) {
 				error_message = util.format(proposalResponses[0].details);
 			} else {
@@ -318,7 +383,15 @@ var invokeChaincode = async function(peerNames, channelName, chaincodeName, args
 
 		//异步写block，这里不会等待写入block之后再返回
 		//commit(channel, tx_id_string, tx_id, proposalResponses, proposal);
+
+		//return tx_id_string;
+		//logger.info("Response result is " + proposalResponses[0].response.payload.toString('utf8'));
+		//return proposalResponses[0].response.payload.toString('utf8');
 	} else {
+		//let message = util.format('Failed to invoke chaincode. cause: %s',error_message);
+		//logger.error(message);
+		//throw new Error(message);
+
 		logger.error(error_message);
 		throw new Error(error_message);
 	}
@@ -414,6 +487,8 @@ var recovery = async function(task, peer, channelName, chaincodeName, username, 
 			throw new Error("no taskJson for taskId " + taskId);
 		}
 
+		//logger.debug(taskJson);
+
     var taskSignString = JSON.parse(taskJson.signString);
 		var taskName = taskSignString.taskName;
 
@@ -426,6 +501,13 @@ var recovery = async function(task, peer, channelName, chaincodeName, username, 
 		//重启新的一轮
 		await negoUtil.newround(taskId, peer, channelName, chaincodeName, username, org_name);
 
+		//var taskIds = [];
+		//taskIds[0] = taskId;
+		//var requestStrategy = request.strategyMap.get(requesterName);
+		//if (!requestStrategy) {
+		//	logger.error("no strategy profile for requester: " + requesterName);
+		//	return "no strategy profile for requester: " + requesterName;
+		//}
 		var taskNames = [taskName];
 
 		//寻找新的provider

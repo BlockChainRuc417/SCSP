@@ -78,6 +78,7 @@ var writeResponse = async function(response, peer, channelName, chaincodeName, u
 
 		var fcn = "writeResponse";
     var args = [];
+		//var peerNames = [peer];
 
     //做签名
    	const EcdsaDerSigTask = asn1.define('ECPrivateKey', function() {
@@ -115,6 +116,7 @@ var check = async function(taskId, peer, channelName, chaincodeName, username, o
 		var fcn = "check";
 		var args = [];
 		args[0] = taskId;
+		//peerNames = [peer];
 
     let agreementAsBytes = await invoke.invokeChaincode(peer, channelName, chaincodeName, fcn, args, username, org_name);
 
@@ -142,6 +144,7 @@ var getagreement = async function(taskname, peer, channelName, chaincodeName, us
       return taskAsBytes;
     }
 
+    //logger.debug(taskAsBytes);
     if (!taskAsBytes) {
       return taskAsBytes;
     }
@@ -183,7 +186,8 @@ var newround = async function(taskId, peer, channelName, chaincodeName, username
     args[0] = taskId;
     await invoke.invokeChaincode(peerNames, channelName, chaincodeName, fcn, args, username, org_name);
     logger.info("sucessfully delete requests & responses for task " + taskId);
-
+    //return "successfully start a new round!\n";
+    //return taskId + "\n";
     var result = {
       success: true,
       message: "sucessfully delete requests & responses for task " + taskId
@@ -202,8 +206,9 @@ var scheduledTransfer = async function(taskId, peer, channelName, chaincodeName,
     args[0] = taskId;
     args[1] = "agreement";
 
+    //logger.debug(args[0] + ", " + args[1]);
     var result = await query.queryChaincode(peer, channelName, chaincodeName, args, fcn, username, org_name);
-
+    //logger.debug(agreementAsBytes);
     if (result && typeof result === 'string' &&
             (result.includes('Error:')||result.includes('Error'))){
       logger.error(result);
@@ -222,12 +227,21 @@ var scheduledTransfer = async function(taskId, peer, channelName, chaincodeName,
     logger.debug(expireTimeDate);
     schedule.scheduleJob(taskId, expireTimeDate, async function(){
       logger.debug("scheduled Transfer!");
+      //requester = agreement.requester;
+      //provider = agreement.provider;
+      //finalPrice = agreement.finalPrice;
 
       var fcn = "confirmPay";
       var args = [taskId];
       var peerNames = [peer];
       await invoke.invokeChaincode(peerNames, channelName, chaincodeName, fcn, args, username, org_name);
+      //await query.queryChaincode(peer, channelName, chaincodeName, "[]", "queryTask", username, org_name);
     });
+    //schedule.cancelNext(taskId);
+    //expireTimeDate = new Date("2018-04-12T15:31+08:00");
+    //schedule.rescheduleJob(taskId, expireTimeDate);
+    //var all_jobs = schedule.scheduledJobs;
+    //logger.debug(all_jobs[taskId]);
 
   } catch (err) {
 		logger.error(err);
@@ -239,6 +253,7 @@ var scheduledTransfer = async function(taskId, peer, channelName, chaincodeName,
 
 var deleteTask = async function(taskName, requesterName, peer, channelName, chaincodeName, username, org_name) {
   try{
+    //logger.debug(request.taskMap);
     var taskKey = taskName + "~" + requesterName;
     var taskId = request.taskMap.get(taskKey);
     if (!taskId) {
@@ -277,6 +292,7 @@ var deleteServiceTX = async function(peer, channelName, chaincodeName, username,
     var args = [];
 
     await invoke.invokeChaincode(peerNames, channelName, chaincodeName, fcn, args, username, org_name);
+
 
     var message = "sucessfully delete serviceTXs";
     logger.info(message);

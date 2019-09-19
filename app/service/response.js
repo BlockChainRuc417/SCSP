@@ -65,6 +65,8 @@ var strategyByTaskNameRound = async function(taskName, requesterName, roundIndex
         }
 
         await Promise.all(responsesArray);
+        //logger.debug("responses done!");
+        //return "responses done!\n";
         logger.debug("requester " + requesterName + ", responses " + responseStrategyPath + " for task " + taskName + " have been loaded!");
         return "requester " + requesterName + ", responses " + responseStrategyPath + " for task " + taskName + " have been loaded!\n";
     }

@@ -1,6 +1,0 @@
-[2018-09-18 14:59:23.525] [ERROR] Service - invoke chaincode proposal was bad
-[2018-09-18 14:59:23.525] [ERROR] Service - chaincode error (status: 500, message: no state! task: 1884439225941099520)
-[2018-09-18 14:59:23.525] [ERROR] Service - Error: chaincode error (status: 500, message: no state! task: 1884439225941099520)
-[2018-09-18 14:59:25.175] [ERROR] Service - invoke chaincode proposal was bad
-[2018-09-18 14:59:25.176] [ERROR] Service - chaincode error (status: 500, message: no state! task: 1884439225941099520)
-[2018-09-18 14:59:25.176] [ERROR] Service - Error: chaincode error (status: 500, message: no state! task: 1884439225941099520)

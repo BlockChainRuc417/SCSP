@@ -75,6 +75,8 @@ async function getClientForOrg (userorg, username) {
   //logger.error(hfc.getConfigSetting(userorg+config));
 	client.loadFromConfig(hfc.getConfigSetting(userorg+config));
 
+	//logger.debug("test: " + userorg+config + "  " + hfc.getConfigSetting(userorg+config));
+
 	// this will create both the state store and the crypto store based
 	// on the settings in the client section of the connection profile
 	await client.initCredentialStores();
@@ -114,6 +116,7 @@ var getRegisteredUser = async function(username, userOrg, isJson) {
 			var admins = hfc.getConfigSetting('admins');
 			let adminUserObj = await client.setUserContext({username: admins[0].username, password: admins[0].secret});
 			let caClient = client.getCertificateAuthority();
+      //logger.error(userOrg.toLowerCase() + '.department1');
 			let secret = await caClient.register({
 				enrollmentID: username,
         affiliation: 'org1.department1'

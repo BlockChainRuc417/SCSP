@@ -122,7 +122,7 @@ organizations:
     # this way. The SDK should allow applications to set the org admin identity via APIs, and only use
     # this route as an alternative when it exists.
     adminPrivateKey:
-      path: artifacts/channel/crypto-config/peerOrganizations/fabric.gfe.com/users/Admin@fabric.gfe.com/msp/keystore/33370785d3731ed2213a47c3be78288571f51c803baa3a6d2abe5f667b5894c0_sk
+      path: artifacts/channel/crypto-config/peerOrganizations/fabric.gfe.com/users/Admin@fabric.gfe.com/msp/keystore/b841a46e02fa82d82ab384435f4cca840c64d8dccae75fe8b52ec6d07233916a_sk
     signedCert:
       path: artifacts/channel/crypto-config/peerOrganizations/fabric.gfe.com/users/Admin@fabric.gfe.com/msp/signcerts/Admin@fabric.gfe.com-cert.pem
 
@@ -139,7 +139,7 @@ organizations:
     certificateAuthorities:
       - ca-deke
     adminPrivateKey:
-      path: artifacts/channel/crypto-config/peerOrganizations/fabric.deke.com/users/Admin@fabric.deke.com/msp/keystore/91b122f3f9224e506add376e6781b8853d88919aa0d25a8b97af3a143d77a181_sk
+      path: artifacts/channel/crypto-config/peerOrganizations/fabric.deke.com/users/Admin@fabric.deke.com/msp/keystore/b648e7e71db265e862e2ac72dde1c661133d412dac4869792141dbc8bceb24b2_sk
     signedCert:
       path: artifacts/channel/crypto-config/peerOrganizations/fabric.deke.com/users/Admin@fabric.deke.com/msp/signcerts/Admin@fabric.deke.com-cert.pem
 

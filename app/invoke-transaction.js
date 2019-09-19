@@ -57,6 +57,8 @@ var invokeChaincode = async function(peerNames, channelName, chaincodeName, fcn,
 		var proposalResponses = results[0];
 		var proposal = results[1];
 
+		//logger.debug(proposalResponses[0].details)
+
 		// lets have a look at the responses to see if they are
 		// all good, if good they will also include signatures
 		// required to be committed
@@ -66,6 +68,7 @@ var invokeChaincode = async function(peerNames, channelName, chaincodeName, fcn,
 			if (proposalResponses && proposalResponses[i].response &&
 				proposalResponses[i].response.status === 200) {
 				one_good = true;
+				//logger.info('invoke chaincode proposal was good');
 				logger.debug('invoke chaincode proposal was good');
 			} else {
 				logger.error('invoke chaincode proposal was bad');
@@ -78,6 +81,8 @@ var invokeChaincode = async function(peerNames, channelName, chaincodeName, fcn,
 				'Successfully sent Proposal and received ProposalResponse: Status - %s, message - "%s", metadata - "%s", endorsement signature: %s',
 				proposalResponses[0].response.status, proposalResponses[0].response.message,
 				proposalResponses[0].response.payload, proposalResponses[0].endorsement.signature));
+
+			//return proposalResponses[0].response.payload.toString('utf8');
 
 			// wait for the channel-based event hub to tell us
 			// that the commit was good or bad on each peer in our organization
@@ -153,11 +158,13 @@ var invokeChaincode = async function(peerNames, channelName, chaincodeName, fcn,
 				}
 			}
 		} else {
+			//logger.debug(proposalResponses[0].details)
 			if(proposalResponses[0].details) {
 				error_message = util.format(proposalResponses[0].details);
 			} else {
 				error_message = util.format('Failed to send Proposal and receive all good ProposalResponse');
 			}
+			//logger.debug(error_message);
 		}
 	} catch (error) {
 		logger.error('Failed to invoke due to error: ' + error.stack ? error.stack : error);
@@ -170,8 +177,13 @@ var invokeChaincode = async function(peerNames, channelName, chaincodeName, fcn,
 			org_name, channelName, tx_id_string);
 		logger.debug(message);
 
+		//return tx_id_string;
+		//logger.info("Response result is " + proposalResponses[0].response.payload.toString('utf8'));
 		return proposalResponses[0].response.payload.toString('utf8');
 	} else {
+		//let message = util.format('Failed to invoke chaincode. cause: %s',error_message);
+		//logger.error(message);
+		//throw new Error(message);
 		logger.error(error_message);
 		throw new Error(error_message);
 	}

@@ -1,4 +1,5 @@
 
+
 var path = require('path');
 var helper = require('../helper.js');
 var hfc = require('fabric-client');
@@ -47,6 +48,7 @@ var propose = async function(taskNames, requesterName, peer, channelName, chainc
         agrementArrayString = agrementArrayString + agreementString + ", ";
       }, (err)=>{
         errorString = errorString + "{\"error\":\"" + err.toString() + "\"}, ";
+        //logger.error(err.toString());
       });
     }
     await Promise.all(taskArray);
@@ -65,6 +67,7 @@ var propose = async function(taskNames, requesterName, peer, channelName, chainc
 		logger.error(err);
 		return err.toString();
 	}
+
 }
 
 var strategyByTaskName = async function(taskName, requestJson, peer, channelName, chaincodeName, username, orgname) {
@@ -74,16 +77,19 @@ var strategyByTaskName = async function(taskName, requestJson, peer, channelName
     do{
       logger.info("==================== task: " + taskName + ", round: " + roundIndex + " =======================");
       result = await strategyByTaskNameRound(taskName, requestJson, roundIndex, peer, channelName, chaincodeName, username, orgname);
+      //logger.debug("hellooooooo: " + result);
       var flag = false;
       if (result && typeof result === 'string' && result.includes('Error:')) {
         flag = true;
         roundIndex ++;
+        //await negoUtil.newround(taskId, peer, channelName, chaincodeName, username, orgname);
       }
     } while (flag);
     return result;
 
   } catch (err) {
 		logger.error(err);
+		//return err.toString();
     throw err;
 	}
 }
@@ -96,12 +102,15 @@ var strategyByTaskNameRound = async function(taskName, requestJson, roundIndex, 
     task[0] = taskName;
     task[1] = requestJson["requester"];
     task[2] = requestJson[taskName]["description"];
+    //logger.debug(task[2]);
+    ///task[2] = r.taskName.description;
 
     if (roundIndex < 0) {
       logger.debug("roundIndex should be postive integer!");
       throw new Error("roundIndex should be postive integer!");
     }
 
+    //taskName = task[0];
     var requesterName = task[1];
     var taskKey = taskName + "~" + requesterName;
     var taskId = taskMap.get(taskKey);
@@ -121,6 +130,7 @@ var strategyByTaskNameRound = async function(taskName, requestJson, roundIndex, 
       var taskName = taskSignJSON.taskName;
       var requesterName = taskSignJSON.requester;
 
+      //logger.debug(taskName);
       taskKey = taskName + "~" + requesterName;
       taskMap.set(taskKey, taskId);
       taskJsonMap.set(taskId, taskJSON);
@@ -161,10 +171,16 @@ var strategyByTaskNameRound = async function(taskName, requestJson, roundIndex, 
     event = listener.event;
     event.emit(taskName, requesterName, roundIndex);
 
+    //logger.debug(taskMap);
+    //logger.debug(requestMap);
+
     await negoUtil.sleep(requestJson["timeout"]);
 
+    //logger.debug("request " + requestStrategyPath + " for task " + taskName + " have been loaded!");
+    //return "request " + requestStrategyPath + " for task " + taskName + " have been loaded!";
     taskKey = taskName + "~" + requesterName;
     taskId = taskMap.get(taskKey);
+    //logger.debug(taskId + ", " + taskName);
 
     let message = await negoUtil.check(taskId, peer, channelName, chaincodeName, username, orgname);
 
@@ -172,6 +188,7 @@ var strategyByTaskNameRound = async function(taskName, requestJson, roundIndex, 
 
     if (message && typeof message === 'string' && message.includes('Error:')) {
       logger.debug(message);
+      //throw new Error(message);
     } else {
       var agreementJson = JSON.parse(message);
       agreementJson["taskName"]=taskName;
@@ -196,6 +213,7 @@ var strategyByTaskNameRound = async function(taskName, requestJson, roundIndex, 
 
   } catch (err) {
 		logger.error(err);
+		//return err.toString();
     throw err;
 	}
 }
@@ -233,6 +251,10 @@ var writeRequest = async function(roundIndex, requestInfo, peer, channelName, ch
     args[3] = rsSigTask.s.toString();
     args[4] = cert;
 
+		//let requestJson =
+    //let requestAsBytes = await invoke.invokeChaincode(peerNames, channelName, chaincodeName, fcn, args, username, org_name);
+    //logger.debug("test: " + args);
+    //let requestAsBytes = await negoUtil.writeRequest(args, peer, channelName, chaincodeName, username, org_name);
 		var fcn = "writeRequest";
     let requestAsBytes = await invoke.invokeChaincode(peer, channelName, chaincodeName, fcn, args, username, org_name);
 
@@ -257,9 +279,11 @@ var writeRequest = async function(roundIndex, requestInfo, peer, channelName, ch
 		return requestJson;
 	} catch (err) {
 		logger.error(err);
+		//return err.toString();
     throw err;
 	}
 };
+
 
 
 module.exports.taskMap = taskMap;
