@@ -7,6 +7,7 @@
 以下指南将帮助你在本地机器上安装和运行该项目，进行开发和测试。
 
 ## 安装要求
+Hyperledger Fabric v1.1 (https://hyperledger-fabric.readthedocs.io/en/release-1.1/)目前只支持1.1版本
 
 [curl]( https://curl.haxx.se/)-v7.47.0（根据系统版本下载对应版本curl）
 
